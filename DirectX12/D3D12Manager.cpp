@@ -31,6 +31,8 @@ D3D12Manager::D3D12Manager(HWND hwnd, int window_width, int window_height):
 	scissor_rect_.bottom = window_height_;
 
 	plane_.Initialize(device_.Get());
+	sphere_.Initialize(device_.Get());
+
 }
 
 D3D12Manager::~D3D12Manager(){}
@@ -253,8 +255,10 @@ HRESULT D3D12Manager::CreateCommandList(){
 
 HRESULT D3D12Manager::CreateRootSignature(){
 	HRESULT hr{};
-	D3D12_ROOT_PARAMETER		root_parameters[1]{};
+	D3D12_DESCRIPTOR_RANGE		range[1]{};
+	D3D12_ROOT_PARAMETER		root_parameters[2]{};
 	D3D12_ROOT_SIGNATURE_DESC	root_signature_desc{};
+	D3D12_STATIC_SAMPLER_DESC	sampler_desc{};
 	ComPtr<ID3DBlob> blob{};
 
 	//定数バッファをデスクリプタを介さずに渡すように設定	
@@ -264,11 +268,39 @@ HRESULT D3D12Manager::CreateRootSignature(){
 	root_parameters[0].Descriptor.RegisterSpace		= 0;
 
 
+	//テクスチャのデスクリプタヒープを渡すように設定
+	range[0].NumDescriptors     = 1;
+	range[0].BaseShaderRegister = 0;
+	range[0].RangeType          = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	root_parameters[1].ParameterType				= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	root_parameters[1].ShaderVisibility				= D3D12_SHADER_VISIBILITY_ALL;
+	root_parameters[1].DescriptorTable.NumDescriptorRanges = 1;
+	root_parameters[1].DescriptorTable.pDescriptorRanges   = &range[0];
+
+
+	//サンプラの設定
+	sampler_desc.Filter				= D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	sampler_desc.AddressU			= D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler_desc.AddressV			= D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler_desc.AddressW			= D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	sampler_desc.MipLODBias			= 0.0f;
+	sampler_desc.MaxAnisotropy		= 16;
+	sampler_desc.ComparisonFunc		= D3D12_COMPARISON_FUNC_NEVER;
+	sampler_desc.BorderColor		= D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+	sampler_desc.MinLOD				= 0.0f;
+	sampler_desc.MaxLOD				= D3D12_FLOAT32_MAX;
+	sampler_desc.ShaderRegister		= 0;
+	sampler_desc.RegisterSpace		= 0;
+	sampler_desc.ShaderVisibility	= D3D12_SHADER_VISIBILITY_ALL;
+
+
 	root_signature_desc.Flags				= D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	root_signature_desc.NumParameters		= _countof(root_parameters);
 	root_signature_desc.pParameters			= root_parameters;
-	root_signature_desc.NumStaticSamplers	= 0;
-	root_signature_desc.pStaticSamplers		= nullptr;
+	root_signature_desc.NumStaticSamplers	= 1;
+	root_signature_desc.pStaticSamplers		= &sampler_desc;
 
 	hr = D3D12SerializeRootSignature(&root_signature_desc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, nullptr);
 	if(FAILED(hr)){
@@ -304,9 +336,9 @@ HRESULT D3D12Manager::CreatePipelineStateObject(){
 
 	// 頂点レイアウト.
 	D3D12_INPUT_ELEMENT_DESC InputElementDesc[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 	};
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipeline_state_desc{};
@@ -455,8 +487,10 @@ HRESULT D3D12Manager::PopulateCommandList(){
 
 	
 	//板ポリの描画
-	plane_.Draw(command_list_.Get());
+	//plane_.Draw(command_list_.Get());
 
+	//球の描画
+	sphere_.Draw(command_list_.Get());
 
 
 	//リソースの状態をレンダーターゲットからプレゼント用に変更

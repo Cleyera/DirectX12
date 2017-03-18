@@ -27,12 +27,18 @@
     <ClCompile Include="Plane.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D12Manager.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Plane.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
   </ItemGroup>

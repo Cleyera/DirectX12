@@ -2,16 +2,19 @@ cbuffer cbTansMatrix : register(b0){
 	float4x4 WVP;
 };
 
+Texture2D<float4> tex0 : register(t0);
+SamplerState samp0 : register(s0);
+
 struct VS_INPUT{
 	float3 Position : POSITION;
 	float3 Normal	: NORMAL;
-	float4 Color	: COLOR;
+	float2 UV		: TEXCOORD;
 };
 
 struct PS_INPUT{//(VS_OUTPUT)
 	float4 Position : SV_POSITION;
 	float4 Normal	: NORMAL;
-	float4 Color	: COLOR;
+	float2 UV		: TEXCOORD;
 };
 
 
@@ -23,12 +26,12 @@ PS_INPUT VSMain(VS_INPUT input){
 	float4 Nrm = float4(input.Normal, 1.0f);
 	output.Position = mul(Pos, WVP);
 	output.Normal = mul(Nrm, WVP);
-	output.Color = input.Color;
+	output.UV = input.UV;
 
 	return output;
 }
 
 
 float4 PSMain(PS_INPUT input) : SV_TARGET{
-	return input.Color;
+	return tex0.Sample(samp0, input.UV);
 }

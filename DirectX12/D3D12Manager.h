@@ -9,6 +9,7 @@
 #include <DirectXMath.h>
 #include <wrl/client.h>
 #include "Plane.h"
+#include "Sphere.h"
 
 
 using namespace DirectX;
@@ -17,7 +18,7 @@ using namespace Microsoft::WRL;
 struct Vertex3D{
 	XMFLOAT3 Position;	//位置
 	XMFLOAT3 Normal;	//法線
-	XMFLOAT4 Color;		//頂点カラー
+	XMFLOAT2 UV;		//UV座標
 };
 
 
@@ -71,6 +72,7 @@ private:
 	D3D12_VIEWPORT						viewport_;
 
 	Plane plane_;
+	Sphere sphere_;
 
 };
 

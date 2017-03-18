@@ -154,10 +154,12 @@
     <ClCompile Include="D3D12Manager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D12Manager.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders.hlsl">

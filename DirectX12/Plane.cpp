@@ -53,10 +53,10 @@ HRESULT Plane::Initialize(ID3D12Device *device){
 	buffer[1].Normal = {0.0f, 0.0f, -1.0f};
 	buffer[2].Normal = {0.0f, 0.0f, -1.0f};
 	buffer[3].Normal = {0.0f, 0.0f, -1.0f};
-	buffer[0].Color = {1.0f, 0.0f, 0.0f, 1.0f};
-	buffer[1].Color = {0.0f, 1.0f, 0.0f, 1.0f};
-	buffer[2].Color = {0.0f, 0.0f, 1.0f, 1.0f};
-	buffer[3].Color = {1.0f, 1.0f, 1.0f, 1.0f};
+	buffer[0].UV = {0.0f, 0.0f};
+	buffer[1].UV = {0.0f, 1.0f};
+	buffer[2].UV = {1.0f, 0.0f};
+	buffer[3].UV = {1.0f, 1.0f};
 
 	vertex_buffer_->Unmap(0, nullptr);
 	buffer = nullptr;
