@@ -10,6 +10,7 @@
 #include <wrl/client.h>
 #include "Plane.h"
 #include "Sphere.h"
+#include "ShadowMapDebug.h"
 
 
 using namespace DirectX;
@@ -38,9 +39,13 @@ public:
 	HRESULT CreateCommandList();
 	HRESULT CreateRootSignature();
 	HRESULT CreatePipelineStateObject();
+	HRESULT CreateLightBuffer();
+	HRESULT CreateShadowBuffer();
+	HRESULT CreateShadowMapPipelineState();
 	HRESULT WaitForPreviousFrame();
-	HRESULT SetResourceBarrier(D3D12_RESOURCE_STATES BeforeState, D3D12_RESOURCE_STATES AfterState);
+	HRESULT SetResourceBarrier(ID3D12Resource* resource, D3D12_RESOURCE_STATES BeforeState, D3D12_RESOURCE_STATES AfterState);
 	HRESULT PopulateCommandList();
+	HRESULT ExecuteCommandList();
 	HRESULT Render();
 
 private:
@@ -68,11 +73,29 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE			dsv_handle_;
 	ComPtr<ID3D12PipelineState>			pipeline_state_;
 	ComPtr<ID3D12RootSignature>			root_sugnature_;
+	
+	
+	ComPtr<ID3D12Resource>				light_buffer_;		//ライト用の定数バッファ
+	ComPtr<ID3D12DescriptorHeap>		dh_shadow_buffer_;	//シャドウマップ用深度バッファ用デスクリプタヒープ
+	ComPtr<ID3D12DescriptorHeap>		dh_shadow_texture_;	//シャドウマップ用深度テクスチャ用デスクリプタヒープ
+	ComPtr<ID3D12Resource>				shadow_buffer_;		//シャドウマップ用深度バッファ
+	ComPtr<ID3D12PipelineState>			shadow_map_pso_;	//シャドウマップ用のパイプライン
+	D3D12_RECT							scissor_rect_sm_;
+	D3D12_VIEWPORT						viewport_sm_;
+
+
+	XMFLOAT3							light_pos_;			//ライトの位置
+	XMFLOAT3							light_dst_;			//ライトの注視点
+	XMFLOAT3							light_dir_;			//ディレクショナルライトの向き
+	XMFLOAT4							iight_color_;		//ディレクショナルライトの色
+	
+	
 	D3D12_RECT							scissor_rect_;
 	D3D12_VIEWPORT						viewport_;
 
 	Plane plane_;
 	Sphere sphere_;
+	ShadowMapDebug sm_debug_;
 
 };
 

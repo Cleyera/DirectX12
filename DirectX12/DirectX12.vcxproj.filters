@@ -30,6 +30,9 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowMapDebug.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D12Manager.h">
@@ -41,9 +44,15 @@
     <ClInclude Include="Sphere.h">
       <Filter>ソース ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowMapDebug.h">
+      <Filter>ソース ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders.hlsl">
+      <Filter>ソース ファイル\Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="ShadowMapDebug.hlsl">
       <Filter>ソース ファイル\Shader</Filter>
     </FxCompile>
   </ItemGroup>
